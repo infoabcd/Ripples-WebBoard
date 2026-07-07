@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #ffffee;
+  --bg-panel: #eef2ff;
+  --fg: #000000;
+  --board: #789922;
+  --board-hover: #cc1105;
+  --link: #0000ee;
+  --link-visited: #551a8b;
+  --post-bg: #d6daf0;
+  --post-op-bg: #c9cde8;
+  --post-border: #b7c5d9;
+  --header-bg: #d6daf0;
+  --header-border: #9aa7c4;
+  --meta: #117743;
+  --warn: #e04000;
+  --warn-bg: #fff3e6;
+  --error-bg: #ffe8e8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: arial, helvetica, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+a {
+  color: var(--link);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--link-visited);
+}
+
+a:hover {
+  color: var(--board-hover);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+button:focus-visible {
+  outline: 2px solid #6b8fc7;
+  outline-offset: 1px;
+}

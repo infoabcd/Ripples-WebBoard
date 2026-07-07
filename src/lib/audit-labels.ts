@@ -1,0 +1,17 @@
+export const auditActionLabels: Record<string, string> = {
+  "thread.approve": "通過主題",
+  "thread.reject": "駁回主題",
+  "reply.approve": "通過回覆",
+  "reply.reject": "駁回回覆",
+  "user.trust": "設為受信",
+  "user.untrust": "撤銷受信",
+  "moderator.assign": "指派版主",
+  "moderator.unassign": "移除版主",
+  "board.create": "建立分區",
+  "board.update": "更新分區",
+  "board.delete": "刪除分區",
+  "invite.create": "建立邀請碼",
+  "invite.delete": "刪除邀請碼",
+  "invite.use": "邀請碼註冊",
+  "system.reseed": "重設資料",
+};
