@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import type { DatabaseAdapter } from "@/server/db/adapter";
+import { boolParam } from "@/server/db/adapter";
 import { mapInviteCode, mapInviteCodeUse } from "@/server/db/mappers";
 import type { InviteCode, InviteCodeUse } from "@/lib/types";
 
@@ -32,6 +33,7 @@ export class InviteCodeRepository {
     code: string;
     note?: string | null;
     maxUses?: number;
+    directTrust?: boolean;
     expiresAt?: string | null;
     createdBy?: string | null;
   }): Promise<InviteCode> {
@@ -41,20 +43,23 @@ export class InviteCodeRepository {
       note: input.note ?? null,
       maxUses: input.maxUses ?? 0,
       useCount: 0,
+      directTrust: input.directTrust ?? false,
       createdAt: new Date().toISOString(),
       expiresAt: input.expiresAt ?? null,
       createdBy: input.createdBy ?? null,
     };
 
     await this.db.run(
-      `INSERT INTO invite_codes (id, code, note, max_uses, use_count, created_at, expires_at, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO invite_codes (
+        id, code, note, max_uses, use_count, direct_trust, created_at, expires_at, created_by
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         invite.id,
         invite.code,
         invite.note,
         invite.maxUses,
         invite.useCount,
+        boolParam(invite.directTrust),
         invite.createdAt,
         invite.expiresAt,
         invite.createdBy,

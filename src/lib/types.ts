@@ -128,6 +128,7 @@ export type InviteCode = {
   note: string | null;
   maxUses: number;
   useCount: number;
+  directTrust: boolean;
   createdAt: string;
   expiresAt: string | null;
   createdBy: string | null;

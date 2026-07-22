@@ -27,6 +27,7 @@ export async function createInviteCode(input: {
   code?: string;
   note?: string;
   maxUses?: number;
+  directTrust?: boolean;
   createdBy?: string;
 }): Promise<InviteCode | { error: string }> {
   const code = (input.code?.trim() || generateInviteCode()).toUpperCase();
@@ -41,6 +42,7 @@ export async function createInviteCode(input: {
     code,
     note: input.note ?? null,
     maxUses: input.maxUses ?? 0,
+    directTrust: input.directTrust ?? false,
     createdBy: input.createdBy ?? null,
   });
 }
@@ -84,6 +86,10 @@ export async function recordInviteRegistration(input: {
     targetType: "user",
     targetId: input.user.id,
     summary: `${input.user.displayName} (@${input.user.username}) 使用邀請碼 ${input.invite.code} 註冊`,
-    metadata: { inviteCodeId: input.invite.id, inviteCode: input.invite.code },
+    metadata: {
+      inviteCodeId: input.invite.id,
+      inviteCode: input.invite.code,
+      directTrust: input.invite.directTrust,
+    },
   });
 }

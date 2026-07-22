@@ -115,6 +115,34 @@ MariaDB 等其它方言：遷移建表後執行同一檔案即可（細節見 `s
 
 ---
 
+# 疑難雜症
+
+## 上傳的圖片看不到，圖片404了
+
+上傳圖片，打開貼文，看不到圖片，打開Network頁看到圖片404了(資源不存在)
+
+這是 Nginx 路由沒配置好的問題，Nginx配置把這個Route請求漏給了Next.js去接住
+
+但Next.js並沒有註冊與編寫這個路由的邏輯，故404
+
+所以要在 location / 之前加一条规则，让 /uploads/ 由 Nginx 从磁盘读取，不经过 Next.js：
+
+```conf
+  location /uploads/ {
+    alias /項目path/public/uploads/;
+    expires 30d;
+    access_log off;
+  }
+```
+
+如果配置了還是沒有生效，看看自己是不是配置了CloudFlare等CDN廠商的快取(緩存)，要傾倒一下
+
+否則快取到了舊介面，就依舊是404
+
+可以通過伺服器上curl來看狀態碼判斷是否是快取問題
+
+---
+
 # License
 
 [MIT](./LICENSE)

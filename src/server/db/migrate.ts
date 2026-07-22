@@ -5,6 +5,24 @@ import { getDb } from "./client";
 
 const MIGRATIONS_DIR = path.join(process.cwd(), "src/server/db/migrations");
 
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+}
+
+function isDuplicateColumnError(error: unknown): boolean {
+  const message = errorMessage(error);
+  return message.includes("duplicate column") || message.includes("already exists");
+}
+
+function isDuplicateMigrationError(error: unknown): boolean {
+  const message = errorMessage(error);
+  return (
+    message.includes("unique constraint") ||
+    message.includes("duplicate key") ||
+    message.includes("duplicate entry")
+  );
+}
+
 export async function runMigrations(): Promise<void> {
   const db = getDb();
 
@@ -22,6 +40,7 @@ export async function runMigrations(): Promise<void> {
     "004_notifications_audit.sql",
     "005_invite_codes.sql",
     "006_invite_code_uses.sql",
+    "007_invite_direct_trust.sql",
   ]) {
     const version = file.replace(".sql", "");
     const applied = await db.get("SELECT version FROM schema_migrations WHERE version = ?", [version]);
@@ -35,12 +54,23 @@ export async function runMigrations(): Promise<void> {
 
     for (const statement of statements) {
       if (statement.includes("schema_migrations")) continue;
-      await db.run(statement);
+      try {
+        await db.run(statement);
+      } catch (error) {
+        if (!isDuplicateColumnError(error)) throw error;
+      }
     }
 
-    await db.run("INSERT INTO schema_migrations (version, applied_at) VALUES (?, ?)", [
-      version,
-      new Date().toISOString(),
-    ]);
+    const latestApplied = await db.get("SELECT version FROM schema_migrations WHERE version = ?", [version]);
+    if (latestApplied) continue;
+
+    try {
+      await db.run("INSERT INTO schema_migrations (version, applied_at) VALUES (?, ?)", [
+        version,
+        new Date().toISOString(),
+      ]);
+    } catch (error) {
+      if (!isDuplicateMigrationError(error)) throw error;
+    }
   }
 }

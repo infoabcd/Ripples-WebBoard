@@ -63,7 +63,13 @@ export async function POST(request: Request) {
     return apiError("用戶名已被使用", 409);
   }
 
-  const user = await createUser({ username, password, displayName, email });
+  const user = await createUser({
+    username,
+    password,
+    displayName,
+    email,
+    isTrusted: inviteCheck.invite?.directTrust ?? false,
+  });
   if (!user) {
     recordRegisterAttempt(request);
     return apiError("用戶名須 3-20 位小寫字母/數字/底線，密碼至少 6 位，顯示名稱 2-24 字", 400);

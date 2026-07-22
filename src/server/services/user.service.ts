@@ -23,6 +23,7 @@ export async function createUser(input: {
   password: string;
   displayName: string;
   email?: string | null;
+  isTrusted?: boolean;
 }): Promise<User | null> {
   const username = input.username.trim().toLowerCase();
   const displayName = input.displayName.trim();
@@ -38,7 +39,13 @@ export async function createUser(input: {
   if (existing) return null;
 
   const passwordHash = await bcrypt.hash(input.password, 10);
-  return getRepositories().users.create({ username, passwordHash, displayName, email });
+  return getRepositories().users.create({
+    username,
+    passwordHash,
+    displayName,
+    email,
+    isTrusted: input.isTrusted,
+  });
 }
 
 export async function setUserEmail(userId: string, email: string | null): Promise<User | null> {

@@ -7,6 +7,7 @@ import NotificationList from "@/components/NotificationList";
 import PageBackBar from "@/components/PageBackBar";
 import ProfilePrivacyNotice from "@/components/ProfilePrivacyNotice";
 import TopBar from "@/components/TopBar";
+import TrustedNotice from "@/components/TrustedNotice";
 import UserThreadCatalog from "@/components/UserThreadCatalog";
 import { getSessionUser } from "@/lib/auth";
 import { formatChanDate } from "@/lib/format";
@@ -87,6 +88,7 @@ export default async function MePage({
       </div>
 
       <PageBackBar />
+      <TrustedNotice />
 
       {showPrivacyNotice ? <ProfilePrivacyNotice /> : null}
 

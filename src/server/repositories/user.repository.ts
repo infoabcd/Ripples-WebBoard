@@ -43,7 +43,10 @@ export class UserRepository {
     passwordHash: string;
     displayName: string;
     email?: string | null;
+    isTrusted?: boolean;
   }): Promise<User> {
+    const now = new Date().toISOString();
+    const isTrusted = input.isTrusted ?? false;
     const user: User = {
       id: randomUUID(),
       username: input.username,
@@ -51,9 +54,9 @@ export class UserRepository {
       displayName: input.displayName,
       email: input.email ?? null,
       role: "member",
-      isTrusted: false,
-      trustedAt: null,
-      createdAt: new Date().toISOString(),
+      isTrusted,
+      trustedAt: isTrusted ? now : null,
+      createdAt: now,
     };
 
     await this.db.run(

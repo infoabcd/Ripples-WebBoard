@@ -6,3 +6,9 @@ out/
 .env.local
 data/
 public/uploads/threads/
+
+.deploy/
+deploy.sh
+
+nginx-boards.conf
+tsconfig.tsbuildinfo

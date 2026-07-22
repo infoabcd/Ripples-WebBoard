@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import styles from "@/app/boards.module.css";
+import TrustedNotice from "@/components/TrustedNotice";
 import { formatChanDate } from "@/lib/format";
 import type { InviteCode } from "@/lib/types";
 
@@ -12,6 +13,7 @@ function CreateInviteForm() {
   const [code, setCode] = useState("");
   const [note, setNote] = useState("");
   const [maxUses, setMaxUses] = useState("0");
+  const [directTrust, setDirectTrust] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,6 +29,7 @@ function CreateInviteForm() {
         code: code.trim() || undefined,
         note: note.trim() || undefined,
         maxUses: Number(maxUses),
+        directTrust,
       }),
     });
     const data = (await res.json()) as { error?: string; code?: InviteCode };
@@ -38,33 +41,45 @@ function CreateInviteForm() {
     setCode("");
     setNote("");
     setMaxUses("0");
+    setDirectTrust(false);
     setMessage(data.code ? `已建立邀請碼：${data.code.code}` : "已建立");
     router.refresh();
   }
 
   return (
-    <div className={styles.formBox}>
-      <h3 className={styles.formTitle}>產生邀請碼</h3>
-      <div className={styles.inlineFormRow}>
-        <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="留空則隨機產生" />
-        <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="備註（可選）" />
-        <input
-          value={maxUses}
-          onChange={(e) => setMaxUses(e.target.value)}
-          type="number"
-          min={0}
-          placeholder="0=不限"
-          title="0 表示不限次數"
-          className={styles.inlineInputNarrow}
-        />
-        <button type="button" className={styles.btn} disabled={loading} onClick={create}>
-          產生
-        </button>
+    <>
+      <TrustedNotice />
+      <div className={styles.formBox}>
+        <h3 className={styles.formTitle}>產生邀請碼</h3>
+        <div className={styles.inlineFormRow}>
+          <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="留空則隨機產生" />
+          <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="備註（可選）" />
+          <input
+            value={maxUses}
+            onChange={(e) => setMaxUses(e.target.value)}
+            type="number"
+            min={0}
+            placeholder="0=不限"
+            title="0 表示不限次數"
+            className={styles.inlineInputNarrow}
+          />
+          <label className={styles.catalogMeta}>
+            <input
+              type="checkbox"
+              checked={directTrust}
+              onChange={(e) => setDirectTrust(e.target.checked)}
+            />{" "}
+            直接受信
+          </label>
+          <button type="button" className={styles.btn} disabled={loading} onClick={create}>
+            產生
+          </button>
+        </div>
+        <p className={styles.catalogMeta}>次數填 0 表示不限，可重複使用；大於 0 則達到上限後失效。</p>
+        {error ? <p className={styles.error}>{error}</p> : null}
+        {message ? <p className={styles.catalogMeta}>{message}</p> : null}
       </div>
-      <p className={styles.catalogMeta}>次數填 0 表示不限，可重複使用；大於 0 則達到上限後失效。</p>
-      {error ? <p className={styles.error}>{error}</p> : null}
-      {message ? <p className={styles.catalogMeta}>{message}</p> : null}
-    </div>
+    </>
   );
 }
 
@@ -109,6 +124,7 @@ export default function DashboardInviteCodes({ codes }: { codes: InviteCode[] })
                 <th>邀請碼</th>
                 <th>備註</th>
                 <th>已用</th>
+                <th>直接受信</th>
                 <th>建立時間</th>
                 <th>操作</th>
               </tr>
@@ -121,6 +137,7 @@ export default function DashboardInviteCodes({ codes }: { codes: InviteCode[] })
                   </td>
                   <td>{item.note ?? "—"}</td>
                   <td>{formatUseLimit(item)}</td>
+                  <td>{item.directTrust ? "是" : "否"}</td>
                   <td className={styles.catalogMeta}>{formatChanDate(item.createdAt)}</td>
                   <td>
                     <DeleteInviteButton id={item.id} />

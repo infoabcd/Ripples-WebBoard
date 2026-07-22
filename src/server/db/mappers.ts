@@ -112,6 +112,7 @@ export function mapInviteCode(row: Record<string, unknown>): InviteCode {
     note: row.note ? String(row.note) : null,
     maxUses: Number(row.max_uses ?? 0),
     useCount: Number(row.use_count ?? 0),
+    directTrust: toBool(row.direct_trust),
     createdAt: String(row.created_at),
     expiresAt: row.expires_at ? String(row.expires_at) : null,
     createdBy: row.created_by ? String(row.created_by) : null,

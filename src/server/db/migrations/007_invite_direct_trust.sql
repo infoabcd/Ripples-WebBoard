@@ -1,0 +1,1 @@
+ALTER TABLE invite_codes ADD COLUMN direct_trust INTEGER NOT NULL DEFAULT 0;

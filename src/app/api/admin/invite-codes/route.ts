@@ -27,12 +27,14 @@ export async function POST(request: Request) {
     code?: string;
     note?: string;
     maxUses?: number;
+    directTrust?: boolean;
   };
 
   const result = await createInviteCode({
     code: body.code,
     note: body.note,
     maxUses: body.maxUses,
+    directTrust: body.directTrust === true,
     createdBy: viewer.id,
   });
 
@@ -45,8 +47,8 @@ export async function POST(request: Request) {
     action: "invite.create",
     targetType: "invite_code",
     targetId: result.id,
-    summary: `建立邀請碼 ${result.code}（${formatInviteMaxUses(result.maxUses)}）`,
-    metadata: { note: result.note ?? "" },
+    summary: `建立邀請碼 ${result.code}（${formatInviteMaxUses(result.maxUses)}${result.directTrust ? "，直接受信" : ""}）`,
+    metadata: { note: result.note ?? "", directTrust: result.directTrust },
   });
 
   return apiOk({ code: result });

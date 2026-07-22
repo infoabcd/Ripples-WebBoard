@@ -5,6 +5,7 @@ import styles from "@/app/boards.module.css";
 import BackLink from "@/components/BackLink";
 import NewThreadForm from "@/components/NewThreadForm";
 import TopBar from "@/components/TopBar";
+import TrustedNotice from "@/components/TrustedNotice";
 import { getSessionUser } from "@/lib/auth";
 import { ensureDatabase } from "@/lib/init";
 import { getBoardBySlug } from "@/server/services/board.service";
@@ -31,6 +32,7 @@ export default async function NewThreadPage({
         [<Link href={`/boards/${board.slug}`}>返回 /{board.slug}/</Link>]
       </div>
       <div className={styles.notice}>提交後將進入待審核狀態，可見範圍取決於你的受信狀態。一次最多上傳一張圖（你可以跟帖回覆更多圖片）。</div>
+      <TrustedNotice />
       <NewThreadForm boardSlug={board.slug} boardName={board.name} />
     </main>
   );
